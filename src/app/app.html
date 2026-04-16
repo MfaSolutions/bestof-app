@@ -1,2 +1,16 @@
-<h1>Hello 👋</h1>
-<p>Bienvenue  MAJD </p>
+<header class="header">
+  <nav class="nav">
+    <div class="nav-brand">
+      <h1>{{ title() }}</h1>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item">
+        <a routerLink="/users" routerLinkActive="active" class="nav-link">Utilisateurs</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<main class="main">
+  <router-outlet></router-outlet>
+</main>

@@ -3,9 +3,22 @@
     <div class="nav-brand">
       <h1>{{ title() }}</h1>
     </div>
-    <ul class="nav-menu">
+    <ul class="nav-menu" *ngIf="authService.isLoggedIn()">
+      <li class="nav-item">
+        <a routerLink="/" routerLinkActive="active" class="nav-link">Accueil</a>
+      </li>
       <li class="nav-item">
         <a routerLink="/users" routerLinkActive="active" class="nav-link">Utilisateurs</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/appointments" routerLinkActive="active" class="nav-link">Rendez-vous</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/weather" routerLinkActive="active" class="nav-link">Météo</a>
+      </li>
+      <li class="nav-item user-menu">
+        <span class="username">{{ authService.getCurrentUser()?.username }}</span>
+        <button (click)="logout()" class="btn-logout">Déconnexion</button>
       </li>
     </ul>
   </nav>

@@ -1,13 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { QuizService } from '../services/quiz.service';
 import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
 
 @Component({
   selector: 'app-quiz',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule],
   template: `
     <div class="quiz-container">
       <div class="quiz-header">
@@ -101,43 +100,28 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
               </div>
             </div>
 
-            <button (click)="openReportModal()" class="btn-report">
-              🚨 Signaler une erreur
+            <button (click)="fetchWikipediaInfo()" class="btn-wikipedia" [disabled]="wikipediaLoading">
+              🔍 {{ wikipediaLoading ? 'Chargement...' : 'Vérifier sur Wikipedia' }}
             </button>
+          </div>
+
+          <!-- Résultats Wikipedia -->
+          <div class="wikipedia-results" *ngIf="showWikipediaResults && wikipediaData">
+            <h4>📖 Informations Wikipedia</h4>
+            <div class="wiki-content">
+              <div class="wiki-country-info" *ngIf="wikipediaData">
+                <h5>{{ wikipediaData.title }}</h5>
+                <p class="wiki-extract">{{ wikipediaData.extract }}</p>
+                <a [href]="wikipediaData.url" target="_blank" class="wiki-link">
+                  Lire l'article complet sur Wikipedia →
+                </a>
+              </div>
+            </div>
           </div>
 
           <div class="button-group">
             <button (click)="goToNextQuestion()" class="btn btn-primary">
               Question suivante →
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modal de signalement -->
-      <div *ngIf="showReportModal" class="modal-overlay" (click)="closeReportModal()">
-        <div class="modal-content" (click)="$event.stopPropagation()">
-          <h3>🚨 Signaler une erreur</h3>
-          <p class="modal-info">
-            Vous avez trouvé une inexactitude ? Décrivez-la ci-dessous pour nous aider à améliorer le quiz.
-          </p>
-          
-          <textarea 
-            [(ngModel)]="reportMessage" 
-            placeholder="Décrivez l'erreur trouvée..." 
-            class="report-textarea">
-          </textarea>
-
-          <p class="error-example" *ngIf="currentQuestion">
-            <strong>Question :</strong> {{ currentQuestion.question }}
-          </p>
-
-          <div class="modal-buttons">
-            <button (click)="submitReport()" class="btn btn-primary" [disabled]="reportMessage.trim().length === 0">
-              Envoyer le signalement
-            </button>
-            <button (click)="closeReportModal()" class="btn btn-secondary">
-              Annuler
             </button>
           </div>
         </div>
@@ -501,107 +485,80 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
       font-weight: 600;
     }
 
-    .btn-report {
+    .btn-wikipedia {
       display: block;
       margin: 20px auto;
       padding: 10px 15px;
-      background: #fff3cd;
-      color: #856404;
-      border: 2px solid #ffc107;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
       border-radius: 6px;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.3s ease;
     }
 
-    .btn-report:hover {
-      background: #ffc107;
-      color: white;
+    .btn-wikipedia:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
+    .btn-wikipedia:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
-    .modal-content {
-      background: white;
-      border-radius: 10px;
-      padding: 30px;
-      max-width: 500px;
-      width: 90%;
-      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-      animation: slideIn 0.3s ease;
+    .wikipedia-results {
+      background: #f8f9fa;
+      border: 2px solid #667eea;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
     }
 
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .modal-content h3 {
+    .wikipedia-results h4 {
       margin: 0 0 15px 0;
       color: #333;
-      font-size: 1.4rem;
+      font-size: 1.1rem;
     }
 
-    .modal-info {
-      color: #666;
-      margin-bottom: 15px;
-      line-height: 1.6;
-    }
-
-    .report-textarea {
-      width: 100%;
-      height: 120px;
-      padding: 12px;
-      border: 2px solid #e0e0e0;
+    .wiki-content {
+      background: white;
       border-radius: 6px;
-      font-family: inherit;
+      padding: 15px;
+    }
+
+    .wiki-country-info {
+      margin-bottom: 0;
+    }
+
+    .wiki-country-info h5 {
+      margin: 0 0 10px 0;
+      color: #667eea;
       font-size: 1rem;
-      resize: vertical;
-      margin-bottom: 15px;
     }
 
-    .report-textarea:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
-
-    .error-example {
-      background: #f5f5f5;
-      padding: 12px;
-      border-radius: 6px;
-      margin-bottom: 15px;
+    .wiki-extract {
+      margin: 0 0 15px 0;
+      line-height: 1.6;
       color: #666;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
     }
 
-    .modal-buttons {
-      display: flex;
-      gap: 10px;
-      justify-content: flex-end;
+    .wiki-link {
+      display: inline-block;
+      color: #667eea;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 8px 12px;
+      border: 2px solid #667eea;
+      border-radius: 4px;
+      transition: all 0.3s ease;
     }
 
-    .modal-buttons .btn {
-      flex: 1;
-      margin: 0;
+    .wiki-link:hover {
+      background: #667eea;
+      color: white;
     }
 
     /* Boutons */
@@ -765,8 +722,9 @@ export class QuizComponent implements OnInit {
   quizResult: QuizResult | null = null;
   showReview = false;
   currentScore = 0;
-  showReportModal = false;
-  reportMessage = '';
+  showWikipediaResults = false;
+  wikipediaLoading = false;
+  wikipediaData: any = null;
 
   constructor(
     private quizService: QuizService,
@@ -789,6 +747,8 @@ export class QuizComponent implements OnInit {
     this.quizResult = null;
     this.showReview = false;
     this.currentScore = 0;
+    this.showWikipediaResults = false;
+    this.wikipediaData = null;
   }
 
   get currentQuestion(): QuizQuestion | null {
@@ -851,6 +811,8 @@ export class QuizComponent implements OnInit {
       this.currentQuestionIndex++;
       this.selectedAnswers = [];
       this.showReview = false;
+      this.showWikipediaResults = false;
+      this.wikipediaData = null;
       this.cdr.detectChanges();
     }
   }
@@ -862,6 +824,8 @@ export class QuizComponent implements OnInit {
     } else if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
       this.selectedAnswers = [];
+      this.showWikipediaResults = false;
+      this.wikipediaData = null;
       this.cdr.detectChanges();
     }
   }
@@ -889,6 +853,8 @@ export class QuizComponent implements OnInit {
       this.quizResult = null;
       this.showReview = false;
       this.currentScore = 0;
+      this.showWikipediaResults = false;
+      this.wikipediaData = null;
       this.cdr.detectChanges();
     }
   }
@@ -901,45 +867,75 @@ export class QuizComponent implements OnInit {
     this.selectedAnswers = [];
     this.showReview = false;
     this.currentScore = 0;
-    this.showReportModal = false;
-    this.reportMessage = '';
+    this.showWikipediaResults = false;
+    this.wikipediaData = null;
     this.cdr.detectChanges();
   }
 
-  openReportModal() {
-    this.showReportModal = true;
-    this.reportMessage = '';
-    this.cdr.detectChanges();
-  }
+  fetchWikipediaInfo() {
+    if (!this.currentQuestion || this.wikipediaLoading) return;
 
-  closeReportModal() {
-    this.showReportModal = false;
-    this.reportMessage = '';
-    this.cdr.detectChanges();
-  }
+    const questionText = this.currentQuestion.question;
+    let searchTerm = '';
 
-  submitReport() {
-    if (!this.selectedTheme || !this.currentQuestion || this.reportMessage.trim().length === 0) {
-      return;
+    // Pour les pays (Quels sont les pays frontaliers de...)
+    const countryMatch = questionText.match(/de (la |l')?([^?]+)\?/);
+    if (countryMatch) {
+      searchTerm = countryMatch[2].trim();
+    } else if (this.currentQuestion.theme === 'pandas') {
+      // Pour les pandas, utiliser "panda" ou "panda géant"
+      if (questionText.toLowerCase().includes('panda géant')) {
+        searchTerm = 'panda géant';
+      } else {
+        searchTerm = 'panda';
+      }
+    } else {
+      // Extraction générique du dernier mot significatif
+      const words = questionText.replace(/[?]/g, '').split(' ');
+      searchTerm = words[words.length - 1];
     }
 
-    const report = {
-      theme: this.selectedTheme.name,
-      questionId: this.currentQuestion.id,
-      question: this.currentQuestion.question,
-      message: this.reportMessage,
-      timestamp: new Date().toISOString()
-    };
+    if (!searchTerm) return;
 
-    // Enregistrer dans localStorage
-    const reports = JSON.parse(localStorage.getItem('quizReports') || '[]');
-    reports.push(report);
-    localStorage.setItem('quizReports', JSON.stringify(reports));
+    this.wikipediaLoading = true;
 
-    // Afficher confirmation
-    alert('✅ Merci ! Votre signalement a été enregistré.\nNous vérifierons et corrigerons cette erreur.');
-    
-    this.closeReportModal();
-    this.cdr.detectChanges();
+    // Appeler l'API Wikipedia
+    const wikiUrl = `https://fr.wikipedia.org/w/api.php?action=query&titles=${encodeURIComponent(searchTerm)}&prop=extracts&explaintext=true&format=json&origin=*`;
+
+    fetch(wikiUrl)
+      .then(response => response.json())
+      .then(data => {
+        const pages = data.query.pages;
+        const page = Object.values(pages)[0] as any;
+
+        if (page && page.extract) {
+          this.wikipediaData = {
+            title: page.title,
+            extract: page.extract.substring(0, 500) + '...',
+            url: `https://fr.wikipedia.org/wiki/${encodeURIComponent(page.title)}`
+          };
+        } else {
+          this.wikipediaData = {
+            title: searchTerm,
+            extract: 'Aucune information trouvée sur Wikipedia.',
+            url: `https://fr.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(searchTerm)}`
+          };
+        }
+
+        this.showWikipediaResults = true;
+        this.wikipediaLoading = false;
+        this.cdr.detectChanges();
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération Wikipedia:', error);
+        this.wikipediaData = {
+          title: searchTerm,
+          extract: 'Erreur lors de la connexion à Wikipedia.',
+          url: `https://fr.wikipedia.org/wiki/${encodeURIComponent(searchTerm)}`
+        };
+        this.showWikipediaResults = true;
+        this.wikipediaLoading = false;
+        this.cdr.detectChanges();
+      });
   }
 }

@@ -22,11 +22,6 @@ import { WeatherService } from '../services/weather.service';
         <p>{{ error }}</p>
       </div>
 
-      <!-- Debug: Afficher l'état -->
-      <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 5px; font-size: 12px;">
-        <strong>Debug:</strong> loading={{ loading }}, weatherData.length={{ weatherData.length }}, condition={{ !loading && weatherData.length > 0 }}
-      </div>
-
       <div *ngIf="!loading && weatherData.length > 0" class="table-container">
         <table class="weather-table">
           <thead>

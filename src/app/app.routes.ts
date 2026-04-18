@@ -7,6 +7,7 @@ import { LoginComponent } from './components/login.component';
 import { AppointmentListComponent } from './components/appointment-list.component';
 import { AppointmentFormComponent } from './components/appointment-form.component';
 import { WeatherComponent } from './components/weather.component';
+import { QuizComponent } from './components/quiz.component';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -20,5 +21,6 @@ export const routes: Routes = [
   { path: 'appointments/new', component: AppointmentFormComponent, canActivate: [authGuard] },
   { path: 'appointments/:id', component: AppointmentFormComponent, canActivate: [authGuard] },
   { path: 'appointments/:id/edit', component: AppointmentFormComponent, canActivate: [authGuard] },
-  { path: 'weather', component: WeatherComponent, canActivate: [authGuard] }
+  { path: 'weather', component: WeatherComponent, canActivate: [authGuard] },
+  { path: 'quiz', component: QuizComponent }
 ];

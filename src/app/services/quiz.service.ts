@@ -47,7 +47,7 @@ export class QuizService {
             { id: 'a4', text: 'Autriche', isCorrect: true },
             { id: 'a5', text: 'Liechtenstein', isCorrect: true }
           ],
-          explanation: 'La Suisse est entourée par la France, l\'Allemagne, l\'Autriche, la Thaïlande, l\'Italie et le Liechtenstein.'
+          explanation: 'La Suisse partage des frontières avec la France, l\'Allemagne, l\'Autriche, l\'Italie et le Liechtenstein.'
         },
         {
           id: 'q4',

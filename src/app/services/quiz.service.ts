@@ -389,7 +389,127 @@ export class QuizService {
             { id: 'a4', text: 'Réduire la qualité du code pour aller vite', isCorrect: false }
           ],
           explanation: 'Optimisation en production : profiling, caching stratégique, requêtes BD optimisées, lazy loading, monitoring continu, versioning APIs.'
-        }
+        },
+        {
+  id: 'cn11',
+  question: 'Qu\'est-ce que le middleware dans ASP.NET Core et comment fonctionne le pipeline?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Chaîne de composants traitant requêtes/réponses - ordre important avec Use()', isCorrect: true },
+    { id: 'a2', text: 'Système de base de données interne', isCorrect: false },
+    { id: 'a3', text: 'Uniquement pour gérer les erreurs', isCorrect: false },
+    { id: 'a4', text: 'Remplace les contrôleurs MVC', isCorrect: false }
+  ],
+  explanation: 'Le pipeline middleware traite chaque requête HTTP séquentiellement. L’ordre des middlewares est critique pour le comportement global.'
+},
+{
+  id: 'cn12',
+  question: 'Quelle est la différence entre IEnumerable et IQueryable?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'IEnumerable exécute en mémoire, IQueryable traduit en requête (ex: SQL)', isCorrect: true },
+    { id: 'a2', text: 'Aucune différence', isCorrect: false },
+    { id: 'a3', text: 'IQueryable est plus lent dans tous les cas', isCorrect: false },
+    { id: 'a4', text: 'IEnumerable est uniquement pour les bases de données', isCorrect: false }
+  ],
+  explanation: 'IQueryable permet l’exécution côté base de données (LINQ to Entities), tandis que IEnumerable exécute en mémoire.'
+},
+{
+  id: 'cn13',
+  question: 'Qu\'est-ce que le boxing et unboxing en C#?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Conversion type valeur → objet (boxing) et inverse (unboxing)', isCorrect: true },
+    { id: 'a2', text: 'Compression mémoire automatique', isCorrect: false },
+    { id: 'a3', text: 'Optimisation du GC', isCorrect: false },
+    { id: 'a4', text: 'Conversion string → int', isCorrect: false }
+  ],
+  explanation: 'Le boxing alloue sur le heap, ce qui peut impacter les performances. À éviter dans les boucles critiques.'
+},
+{
+  id: 'cn14',
+  question: 'Qu\'est-ce que Span<T> et Memory<T> en C#?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Structures pour manipuler la mémoire efficacement sans allocation', isCorrect: true },
+    { id: 'a2', text: 'Collections classiques comme List', isCorrect: false },
+    { id: 'a3', text: 'Système de cache mémoire', isCorrect: false },
+    { id: 'a4', text: 'Remplacement du GC', isCorrect: false }
+  ],
+  explanation: 'Span<T> permet de manipuler des segments mémoire (stack/heap) sans allocations supplémentaires, optimisant les performances.'
+},
+{
+  id: 'cn15',
+  question: 'Qu\'est-ce que les records en C# et quand les utiliser?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Types immuables avec equality par valeur - idéals pour DTO', isCorrect: true },
+    { id: 'a2', text: 'Remplacent toutes les classes', isCorrect: false },
+    { id: 'a3', text: 'Utilisés uniquement pour les bases de données', isCorrect: false },
+    { id: 'a4', text: 'Sont mutables par défaut', isCorrect: false }
+  ],
+  explanation: 'Les records facilitent la gestion d’objets immuables et comparent les valeurs plutôt que les références.'
+},
+{
+  id: 'cn16',
+  question: 'Qu\'est-ce que le Deadlock en C# et comment l\'éviter?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Blocage entre threads - éviter avec ordre de lock cohérent et async/await', isCorrect: true },
+    { id: 'a2', text: 'Erreur de compilation', isCorrect: false },
+    { id: 'a3', text: 'Problème réseau uniquement', isCorrect: false },
+    { id: 'a4', text: 'Crash du CLR', isCorrect: false }
+  ],
+  explanation: 'Un deadlock survient quand deux threads attendent mutuellement. Bon design de synchronisation est essentiel.'
+},
+{
+  id: 'cn17',
+  question: 'Qu\'est-ce que le caching en .NET et quels types utilisez-vous?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Stockage temporaire données - MemoryCache, DistributedCache (Redis)', isCorrect: true },
+    { id: 'a2', text: 'Stockage permanent uniquement', isCorrect: false },
+    { id: 'a3', text: 'Remplace la base de données', isCorrect: false },
+    { id: 'a4', text: 'Uniquement côté client', isCorrect: false }
+  ],
+  explanation: 'Le caching améliore les performances en réduisant les accès coûteux (BD, API). Peut être local ou distribué.'
+},
+{
+  id: 'cn18',
+  question: 'Qu\'est-ce que les Minimal APIs en ASP.NET Core?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'APIs simplifiées sans contrôleurs - code léger et rapide à écrire', isCorrect: true },
+    { id: 'a2', text: 'Remplacement du routing', isCorrect: false },
+    { id: 'a3', text: 'Framework externe', isCorrect: false },
+    { id: 'a4', text: 'Uniquement pour tests', isCorrect: false }
+  ],
+  explanation: 'Minimal APIs permettent de créer rapidement des endpoints avec moins de boilerplate, idéales pour microservices.'
+},
+{
+  id: 'cn19',
+  question: 'Qu\'est-ce que le Rate Limiting et comment l\'implémenter en .NET?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Limiter nombre requêtes - middleware RateLimiter ASP.NET Core', isCorrect: true },
+    { id: 'a2', text: 'Augmenter la vitesse des requêtes', isCorrect: false },
+    { id: 'a3', text: 'Bloquer toutes les requêtes', isCorrect: false },
+    { id: 'a4', text: 'Optimiser la base de données', isCorrect: false }
+  ],
+  explanation: 'Le rate limiting protège les APIs contre abus et surcharge. ASP.NET Core propose un middleware natif.'
+},
+{
+  id: 'cn20',
+  question: 'Qu\'est-ce que la sérialisation en C# et quelles libs utiliser?',
+  theme: 'csharp-dotnet',
+  answers: [
+    { id: 'a1', text: 'Conversion objet ↔ JSON/XML - System.Text.Json recommandé', isCorrect: true },
+    { id: 'a2', text: 'Compression des données uniquement', isCorrect: false },
+    { id: 'a3', text: 'Encryption automatique', isCorrect: false },
+    { id: 'a4', text: 'Uniquement pour logs', isCorrect: false }
+  ],
+  explanation: 'La sérialisation transforme des objets en format transportable. System.Text.Json est performant et natif en .NET.'
+}
       ]
     },
     {

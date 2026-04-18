@@ -206,20 +206,247 @@ import { WeatherService } from '../services/weather.service';
       cursor: not-allowed;
     }
 
-    @media (max-width: 768px) {
+    /* Tablettes et écrans moyens */
+    @media (max-width: 1024px) {
+      .container {
+        padding: 15px;
+      }
+
       .header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
+        padding: 15px;
+        gap: 10px;
+      }
+
+      .header h2 {
+        font-size: 1.5rem;
       }
 
       .weather-table {
-        font-size: 12px;
+        font-size: 13px;
       }
 
       .weather-table th,
       .weather-table td {
+        padding: 10px;
+      }
+
+      .weather-icon {
+        width: 35px;
+        height: 35px;
+      }
+    }
+
+    /* Tablettes en portrait et petits mobiles */
+    @media (max-width: 768px) {
+      .container {
+        padding: 12px;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+        padding: 15px;
+      }
+
+      .header h2 {
+        font-size: 1.3rem;
+        margin: 0;
+      }
+
+      .btn {
+        padding: 10px 15px;
+        font-size: 14px;
+        width: 100%;
+        max-width: 200px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 8px;
+      }
+
+      .weather-table {
+        font-size: 12px;
+        min-width: 100%;
+      }
+
+      .weather-table th,
+      .weather-table td {
+        padding: 8px 6px;
+        word-break: break-word;
+      }
+
+      .weather-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .icon-cell {
+        padding: 8px 4px;
+      }
+
+      .temp-cell {
+        font-size: 1rem;
+      }
+
+      .error-message {
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+
+      .loading-message {
+        padding: 20px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Petits mobiles */
+    @media (max-width: 480px) {
+      .container {
         padding: 8px;
+      }
+
+      .header {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 6px;
+      }
+
+      .header h2 {
+        font-size: 1.2rem;
+        margin: 0;
+      }
+
+      .btn {
+        padding: 10px 12px;
+        font-size: 13px;
+        width: 100%;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 6px;
+        margin-bottom: 20px;
+      }
+
+      .weather-table {
+        font-size: 11px;
+        min-width: 600px;
+      }
+
+      .weather-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      .weather-table th {
+        padding: 6px 4px;
+        text-align: center;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+
+      .weather-table td {
+        padding: 6px 4px;
+        text-align: center;
+        font-size: 10px;
+      }
+
+      .icon-cell {
+        padding: 6px 2px;
+        text-align: center;
+      }
+
+      .weather-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .temp-cell {
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .error-row {
+        font-size: 10px;
+      }
+
+      .error-cell {
+        padding: 10px 4px;
+        font-size: 10px;
+      }
+
+      .error-message {
+        padding: 10px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        margin-bottom: 15px;
+      }
+
+      .error-message p {
+        margin: 0;
+      }
+
+      .loading-message {
+        padding: 15px;
+        font-size: 0.9rem;
+        border-radius: 6px;
+      }
+    }
+
+    /* Ultra petits écrans */
+    @media (max-width: 360px) {
+      .container {
+        padding: 6px;
+      }
+
+      .header {
+        padding: 10px;
+        gap: 8px;
+      }
+
+      .header h2 {
+        font-size: 1.1rem;
+      }
+
+      .btn {
+        padding: 8px 10px;
+        font-size: 12px;
+        min-height: 40px;
+      }
+
+      .weather-table {
+        font-size: 10px;
+        min-width: 550px;
+      }
+
+      .weather-table th {
+        padding: 5px 3px;
+        font-size: 9px;
+      }
+
+      .weather-table td {
+        padding: 5px 3px;
+        font-size: 9px;
+      }
+
+      .weather-icon {
+        width: 24px;
+        height: 24px;
+      }
+
+      .temp-cell {
+        font-size: 0.85rem;
       }
     }
   `]

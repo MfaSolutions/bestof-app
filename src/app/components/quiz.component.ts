@@ -684,31 +684,544 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
       color: #6a1b9a;
     }
 
+    /* Tablettes et écrans moyens */
+    @media (max-width: 1024px) {
+      .quiz-container {
+        padding: 20px;
+      }
+
+      .themes-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+      }
+
+      .quiz-section {
+        padding: 20px;
+      }
+
+      .question-section h3,
+      .question-review h3 {
+        font-size: 1.1rem;
+      }
+
+      .score-circle {
+        width: 130px;
+        height: 130px;
+        font-size: 2.7rem;
+      }
+    }
+
+    /* Tablettes en orientation portrait */
     @media (max-width: 768px) {
       .quiz-container {
-        padding: 10px;
+        padding: 15px;
+        max-width: 100%;
+        margin: 0 auto;
+      }
+
+      .quiz-header {
+        margin-bottom: 20px;
       }
 
       .quiz-header h1 {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 8px;
+      }
+
+      .quiz-header p {
+        font-size: 0.9rem;
       }
 
       .themes-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .theme-card {
+        padding: 20px;
+      }
+
+      .theme-card h3 {
+        font-size: 1.1rem;
+        margin-bottom: 8px;
+      }
+
+      .theme-card p {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+      }
+
+      .quiz-section {
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .quiz-progress h2 {
+        font-size: 1.3rem;
+        margin-bottom: 12px;
+      }
+
+      .quiz-progress p {
+        font-size: 0.85rem;
+      }
+
+      .current-score {
+        padding: 8px;
+        font-size: 0.9rem;
+      }
+
+      .question-section h3,
+      .question-review h3 {
+        font-size: 1rem;
+        margin-bottom: 20px;
+      }
+
+      .answer-button {
+        padding: 12px;
+        font-size: 0.95rem;
+      }
+
+      .checkbox {
+        width: 20px;
+        height: 20px;
+        margin-right: 12px;
+      }
+
+      .checkmark {
+        font-size: 14px;
+      }
+
+      .answer-review {
+        padding: 12px;
+        gap: 10px;
+      }
+
+      .status-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 12px;
+        font-size: 14px;
+      }
+
+      .answer-explanation {
+        padding: 12px;
+        margin-bottom: 15px;
+        font-size: 0.9rem;
+      }
+
+      .answer-explanation p {
+        font-size: 0.9rem;
       }
 
       .button-group {
         flex-direction: column;
+        gap: 8px;
       }
 
       .btn {
         width: 100%;
+        padding: 12px 20px;
+        font-size: 0.95rem;
+      }
+
+      .btn-primary {
+        padding: 12px 20px;
+      }
+
+      .btn-secondary {
+        padding: 12px 20px;
+      }
+
+      .btn-wikipedia {
+        margin: 15px auto;
+        padding: 12px 15px;
+        font-size: 0.9rem;
+        width: 90%;
+        max-width: 300px;
+      }
+
+      .wikipedia-results {
+        margin: 15px 0;
+        padding: 15px;
+      }
+
+      .wikipedia-results h4 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+      }
+
+      .wiki-content {
+        padding: 12px;
+      }
+
+      .wiki-country-info h5 {
+        font-size: 0.95rem;
+        margin-bottom: 8px;
+      }
+
+      .wiki-extract {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+        line-height: 1.5;
+      }
+
+      .wiki-link {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+      }
+
+      .results-section {
+        padding: 20px;
+      }
+
+      .result-header h2 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
       }
 
       .score-circle {
-        width: 120px;
-        height: 120px;
-        font-size: 2.5rem;
+        width: 110px;
+        height: 110px;
+        font-size: 2.2rem;
+      }
+
+      .score-display p {
+        font-size: 1rem;
+      }
+
+      .result-feedback p {
+        font-size: 0.95rem;
+        padding: 12px;
+      }
+    }
+
+    /* Petits mobiles (portrait) */
+    @media (max-width: 480px) {
+      html, body {
+        font-size: 14px;
+      }
+
+      .quiz-container {
+        padding: 12px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .quiz-header {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+
+      .quiz-header h1 {
+        font-size: 1.5rem;
+        margin: 0 0 5px 0;
+        padding: 0;
+      }
+
+      .quiz-header p {
+        font-size: 0.8rem;
+        margin: 0;
+        color: #666;
+      }
+
+      .themes-section h2 {
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+      }
+
+      .themes-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .theme-card {
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .theme-card h3 {
+        font-size: 1rem;
+        margin-bottom: 6px;
+      }
+
+      .theme-card p {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+
+      .question-count {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+      }
+
+      .quiz-section {
+        padding: 12px;
+        border-radius: 6px;
+      }
+
+      .quiz-progress {
+        margin-bottom: 20px;
+      }
+
+      .quiz-progress h2 {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+      }
+
+      .progress-bar {
+        height: 6px;
+        margin-bottom: 8px;
+      }
+
+      .quiz-progress p {
+        font-size: 0.75rem;
+        line-height: 1.4;
+      }
+
+      .current-score {
+        margin-top: 8px !important;
+        padding: 6px;
+        font-size: 0.75rem;
+      }
+
+      .question-section h3,
+      .question-review h3 {
+        font-size: 0.95rem;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+
+      .answers-grid {
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .answer-button {
+        padding: 10px;
+        font-size: 0.85rem;
+        min-height: 44px;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .checkbox {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px;
+        min-width: 18px;
+      }
+
+      .checkmark {
+        font-size: 12px;
+      }
+
+      .answer-review {
+        padding: 10px;
+        gap: 8px;
+        min-height: 44px;
+      }
+
+      .status-icon {
+        width: 24px;
+        height: 24px;
+        margin-right: 8px;
+        min-width: 24px;
+      }
+
+      .answer-text {
+        font-size: 0.85rem;
+      }
+
+      .answer-explanation {
+        padding: 10px;
+        margin-bottom: 15px;
+        font-size: 0.8rem;
+        border-left-width: 3px;
+      }
+
+      .answer-explanation p {
+        font-size: 0.8rem;
+        margin: 0;
+      }
+
+      .answer-feedback {
+        margin-bottom: 15px;
+      }
+
+      .feedback-status {
+        padding: 12px;
+        font-size: 0.9rem;
+      }
+
+      .correct-feedback,
+      .incorrect-feedback {
+        font-size: 0.9rem;
+      }
+
+      .button-group {
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .btn {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+      }
+
+      .btn-wikipedia {
+        margin: 12px auto;
+        padding: 10px 12px;
+        font-size: 0.8rem;
+        width: 95%;
+        min-height: 44px;
+      }
+
+      .wikipedia-results {
+        margin: 12px 0;
+        padding: 12px;
+        border-radius: 6px;
+      }
+
+      .wikipedia-results h4 {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+      }
+
+      .wiki-content {
+        padding: 10px;
+        border-radius: 4px;
+      }
+
+      .wiki-country-info h5 {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      .wiki-extract {
+        font-size: 0.8rem;
+        margin-bottom: 10px;
+        line-height: 1.4;
+      }
+
+      .wiki-link {
+        font-size: 0.75rem;
+        padding: 6px 10px;
+        display: inline-block;
+        margin-top: 5px;
+      }
+
+      .results-section {
+        padding: 15px;
+        border-radius: 8px;
+      }
+
+      .result-header h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+      }
+
+      .score-display {
+        margin-bottom: 20px;
+      }
+
+      .score-circle {
+        width: 100px;
+        height: 100px;
+        font-size: 2rem;
+        margin: 0 auto 15px;
+      }
+
+      .score-display p {
+        font-size: 0.9rem;
+        margin: 8px 0;
+      }
+
+      .result-feedback {
+        margin-bottom: 15px;
+      }
+
+      .result-feedback p {
+        font-size: 0.85rem;
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 6px;
+      }
+
+      /* Amélioration de la lisibilité */
+      input, button, textarea {
+        font-size: 16px;
+        /* Évite le zoom sur iOS */
+      }
+    }
+
+    /* Ultra petits écrans (moins de 360px) */
+    @media (max-width: 360px) {
+      .quiz-container {
+        padding: 8px;
+      }
+
+      .quiz-header h1 {
+        font-size: 1.2rem;
+        margin-bottom: 3px;
+      }
+
+      .quiz-header p {
+        font-size: 0.75rem;
+      }
+
+      .theme-card {
+        padding: 12px;
+      }
+
+      .theme-card h3 {
+        font-size: 0.95rem;
+        margin-bottom: 5px;
+      }
+
+      .theme-card p {
+        font-size: 0.75rem;
+      }
+
+      .quiz-section {
+        padding: 10px;
+      }
+
+      .question-section h3,
+      .question-review h3 {
+        font-size: 0.9rem;
+        margin-bottom: 12px;
+      }
+
+      .answer-button,
+      .answer-review {
+        padding: 8px;
+        font-size: 0.8rem;
+        min-height: 40px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        min-height: 40px;
+      }
+
+      .score-circle {
+        width: 90px;
+        height: 90px;
+        font-size: 1.8rem;
       }
     }
   `]

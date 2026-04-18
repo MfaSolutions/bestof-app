@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { WeatherData } from '../models/weather.model';
@@ -11,7 +11,7 @@ import { WeatherService } from '../services/weather.service';
   template: `
     <div class="container">
       <div class="header">
-        <h2>Météo</h2>
+        <h2>🌤️ Météo</h2>
         <button (click)="refreshWeather()" class="btn btn-primary" [disabled]="loading">
           <span *ngIf="!loading">Actualiser</span>
           <span *ngIf="loading">Chargement...</span>
@@ -22,56 +22,57 @@ import { WeatherService } from '../services/weather.service';
         <p>{{ error }}</p>
       </div>
 
-      <div class="weather-grid">
-        <div class="weather-card" *ngFor="let weather of weatherData; trackBy: trackByCity">
-          <div class="weather-card-content" *ngIf="weather">
-            <div class="city-header">
-              <h3>{{ weather.city }}, {{ weather.country }}</h3>
-              <img [src]="getWeatherIconUrl(weather.icon)" [alt]="weather.description" class="weather-icon">
-            </div>
-
-            <div class="temperature">
-              <span class="temp-value">{{ weather.temperature }}</span>
-              <span class="temp-unit">°C</span>
-            </div>
-
-            <div class="description">
-              {{ weather.description | titlecase }}
-            </div>
-
-            <div class="weather-details">
-              <div class="detail-item">
-                <span class="detail-label">Humidité:</span>
-                <span class="detail-value">{{ weather.humidity }}%</span>
-              </div>
-              <div class="detail-item">
-                <span class="detail-label">Vent:</span>
-                <span class="detail-value">{{ weather.windSpeed }} m/s</span>
-              </div>
-            </div>
-
-            <div class="last-updated">
-              Mis à jour: {{ formatLastUpdated(weather.lastUpdated) }}
-            </div>
-          </div>
-
-          <div class="weather-error" *ngIf="!weather">
-            <p>❌ Impossible de récupérer la météo pour cette ville</p>
-            <small>Vérifiez votre connexion internet</small>
-          </div>
-        </div>
+      <!-- Debug: Afficher l'état -->
+      <div style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 5px; font-size: 12px;">
+        <strong>Debug:</strong> loading={{ loading }}, weatherData.length={{ weatherData.length }}, condition={{ !loading && weatherData.length > 0 }}
       </div>
 
-      <div class="info-section">
-        <h3>À propos</h3>
-        <p>Cette application météo utilise l'API OpenWeatherMap pour afficher les conditions météorologiques actuelles de Vaureal (France) et Rafraf (Tunisie).</p>
-        <p>Les données sont mises à jour en temps réel et incluent la température, l'humidité et la vitesse du vent.</p>
+      <div *ngIf="!loading && weatherData.length > 0" class="table-container">
+        <table class="weather-table">
+          <thead>
+            <tr>
+              <th>Icône</th>
+              <th>Ville</th>
+              <th>Pays</th>
+              <th>Température</th>
+              <th>Description</th>
+              <th>Humidité</th>
+              <th>Vent</th>
+              <th>Mis à jour</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let weather of weatherData; trackBy: trackByCity">
+              <tr *ngIf="weather" [class.weather-row]="weather">
+                <td class="icon-cell">
+                  <img [src]="getWeatherIconUrl(weather.icon)" [alt]="weather.description" class="weather-icon">
+                </td>
+                <td>{{ weather.city }}</td>
+                <td>{{ weather.country }}</td>
+                <td class="temp-cell"><strong>{{ weather.temperature }}°C</strong></td>
+                <td>{{ weather.description | titlecase }}</td>
+                <td>{{ weather.humidity }}%</td>
+                <td>{{ weather.windSpeed }} m/s</td>
+                <td>{{ formatLastUpdated(weather.lastUpdated) }}</td>
+              </tr>
+              <tr *ngIf="!weather" class="error-row">
+                <td colspan="8" class="error-cell">
+                  ❌ Impossible de récupérer la météo - Vérifiez votre connexion
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="loading" class="loading-message">
+        <p>⏳ Chargement des données météo...</p>
       </div>
     </div>
   `,
   styles: [`
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -81,118 +82,85 @@ import { WeatherService } from '../services/weather.service';
       justify-content: space-between;
       align-items: center;
       margin-bottom: 30px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
     }
 
     .header h2 {
       margin: 0;
-      color: #333;
+      font-size: 1.8rem;
     }
 
-    .weather-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
+    .table-container {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
     }
 
-    .weather-card {
+    .weather-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .weather-table thead {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .weather-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
-    }
-
-    .city-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .city-header h3 {
-      margin: 0;
-      font-size: 1.4rem;
+    .weather-table th {
+      padding: 15px;
+      text-align: left;
       font-weight: 600;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .weather-table tbody tr {
+      border-bottom: 1px solid #e0e0e0;
+      transition: background-color 0.2s ease;
+    }
+
+    .weather-table tbody tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    .weather-row {
+      background-color: #ffffff;
+    }
+
+    .weather-table td {
+      padding: 12px 15px;
+      vertical-align: middle;
+    }
+
+    .icon-cell {
+      text-align: center;
     }
 
     .weather-icon {
-      width: 60px;
-      height: 60px;
+      width: 40px;
+      height: 40px;
+      display: inline-block;
     }
 
-    .temperature {
-      display: flex;
-      align-items: baseline;
-      margin-bottom: 10px;
-    }
-
-    .temp-value {
-      font-size: 3.5rem;
-      font-weight: 300;
-      margin-right: 5px;
-    }
-
-    .temp-unit {
-      font-size: 1.5rem;
-      opacity: 0.8;
-    }
-
-    .description {
-      font-size: 1.1rem;
-      margin-bottom: 20px;
-      opacity: 0.9;
-    }
-
-    .weather-details {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 15px;
-    }
-
-    .detail-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .detail-label {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 2px;
-    }
-
-    .detail-value {
-      font-size: 1rem;
+    .temp-cell {
       font-weight: 600;
-    }
-
-    .last-updated {
-      text-align: center;
-      font-size: 0.8rem;
-      opacity: 0.7;
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      padding-top: 10px;
-    }
-
-    .weather-error {
-      text-align: center;
-      color: #ff6b6b;
-    }
-
-    .weather-error p {
-      margin: 0 0 5px 0;
+      color: #d63031;
       font-size: 1.1rem;
     }
 
-    .weather-error small {
-      opacity: 0.8;
+    .error-row {
+      background-color: #ffe6e6;
+    }
+
+    .error-cell {
+      text-align: center;
+      color: #d63031;
+      font-weight: 500;
     }
 
     .error-message {
@@ -210,22 +178,13 @@ import { WeatherService } from '../services/weather.service';
       font-weight: 500;
     }
 
-    .info-section {
-      background: #f8f9fa;
-      padding: 25px;
+    .loading-message {
+      text-align: center;
+      padding: 30px;
+      background: #f0f0f0;
       border-radius: 10px;
-      margin-top: 30px;
-    }
-
-    .info-section h3 {
-      margin-top: 0;
-      color: #333;
-    }
-
-    .info-section p {
-      margin: 10px 0;
-      line-height: 1.6;
       color: #666;
+      font-size: 1.1rem;
     }
 
     .btn {
@@ -253,19 +212,19 @@ import { WeatherService } from '../services/weather.service';
     }
 
     @media (max-width: 768px) {
-      .weather-grid {
-        grid-template-columns: 1fr;
-      }
-
       .header {
         flex-direction: column;
         gap: 15px;
         text-align: center;
       }
 
-      .weather-details {
-        flex-direction: column;
-        gap: 10px;
+      .weather-table {
+        font-size: 12px;
+      }
+
+      .weather-table th,
+      .weather-table td {
+        padding: 8px;
       }
     }
   `]
@@ -275,7 +234,10 @@ export class WeatherComponent implements OnInit {
   loading = false;
   error: string | null = null;
 
-  constructor(private weatherService: WeatherService) {}
+  constructor(
+    private weatherService: WeatherService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.loadWeather();
@@ -284,15 +246,26 @@ export class WeatherComponent implements OnInit {
   loadWeather() {
     this.loading = true;
     this.error = null;
+    console.log('🔄 Début du chargement de la météo...');
+    
     this.weatherService.getWeatherForAllDefaultCities().subscribe({
       next: (data: (WeatherData | null)[]) => {
+        console.log('✅ Données reçues du service:', data);
         this.weatherData = data;
         this.loading = false;
+        console.log('📊 weatherData mis à jour:', this.weatherData);
+        console.log('📊 loading:', this.loading);
+        console.log('📊 weatherData.length:', this.weatherData.length);
+        
+        // Forcer la détection du changement
+        this.cdr.detectChanges();
+        console.log('✅ detectChanges() appelé');
       },
       error: (error: any) => {
-        console.error('Erreur lors du chargement de la météo:', error);
-        this.error = 'Erreur lors du chargement de la météo';
+        console.error('❌ Erreur lors du chargement de la météo:', error);
+        this.error = 'Erreur lors du chargement de la météo. Vérifiez votre connexion.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, catchError, of } from 'rxjs';
+import { Observable, map, catchError, of, forkJoin } from 'rxjs';
 import { WeatherData, City } from '../models/weather.model';
 
 @Injectable({
@@ -32,18 +32,31 @@ export class WeatherService {
     const url = `${this.API_URL}?lat=${city.lat}&lon=${city.lon}&appid=${this.API_KEY}&units=metric&lang=fr`;
 
     return this.http.get<any>(url).pipe(
-      map(response => ({
-        city: city.name,
-        country: city.country,
-        temperature: Math.round(response.main.temp),
-        description: response.weather[0].description,
-        humidity: response.main.humidity,
-        windSpeed: response.wind.speed,
-        icon: response.weather[0].icon,
-        lastUpdated: new Date()
-      })),
+      map(response => {
+        console.log('Réponse API pour', city.name, response);
+        
+        // Vérifier que les données nécessaires existent
+        if (!response?.main?.temp || !response?.weather?.[0]) {
+          console.warn(`Données incomplètes pour ${city.name}`);
+          return null;
+        }
+        
+        const weather: WeatherData = {
+          city: response.name || city.name,
+          country: response.sys?.country || city.country,
+          temperature: Math.round(response.main.temp),
+          description: response.weather[0].description || 'N/A',
+          humidity: response.main.humidity || 0,
+          windSpeed: Math.round(response.wind.speed * 10) / 10,
+          icon: response.weather[0].icon || '01d',
+          lastUpdated: new Date()
+        };
+        
+        console.log('Objet WeatherData créé:', weather);
+        return weather;
+      }),
       catchError(error => {
-        console.error('Erreur lors de la récupération de la météo:', error);
+        console.error('Erreur API pour', city.name, error);
         return of(null);
       })
     );
@@ -59,33 +72,19 @@ export class WeatherService {
 
   getWeatherForAllDefaultCities(): Observable<(WeatherData | null)[]> {
     const weatherObservables = this.defaultCities.map(city =>
-      this.getWeatherForCity(city)
+      this.getWeatherForCity(city).pipe(
+        catchError(error => {
+          console.error(`Erreur pour ${city.name}:`, error);
+          return of(null);
+        })
+      )
     );
 
-    return new Observable(observer => {
-      const results: (WeatherData | null)[] = [];
-      let completed = 0;
-
-      weatherObservables.forEach((obs, index) => {
-        obs.subscribe({
-          next: (weather) => {
-            results[index] = weather;
-            completed++;
-            if (completed === weatherObservables.length) {
-              observer.next(results);
-              observer.complete();
-            }
-          },
-          error: (error) => {
-            results[index] = null;
-            completed++;
-            if (completed === weatherObservables.length) {
-              observer.next(results);
-              observer.complete();
-            }
-          }
-        });
-      });
-    });
+    return forkJoin(weatherObservables).pipe(
+      catchError(error => {
+        console.error('Erreur lors de forkJoin:', error);
+        return of([null, null]);
+      })
+    );
   }
 }

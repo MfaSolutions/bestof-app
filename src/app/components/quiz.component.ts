@@ -36,9 +36,11 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
             <div class="progress-fill" [style.width.%]="(currentQuestionIndex + 1) / selectedTheme.questions.length * 100"></div>
           </div>
           <p>Question {{ currentQuestionIndex + 1 }} / {{ selectedTheme.questions.length }}</p>
+          <p class="current-score">Score actuel: <strong>{{ currentScore }} / {{ currentQuestionIndex }}</strong></p>
         </div>
 
-        <div class="question-section" *ngIf="currentQuestion">
+        <!-- Affichage de la question -->
+        <div class="question-section" *ngIf="currentQuestion && !showReview">
           <h3>{{ currentQuestion.question }}</h3>
           
           <div class="answers-grid">
@@ -57,8 +59,51 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
             <button (click)="previousQuestion()" class="btn btn-secondary" [disabled]="currentQuestionIndex === 0">
               ← Précédent
             </button>
-            <button (click)="nextQuestion()" class="btn btn-primary" [disabled]="selectedAnswers.length === 0">
-              Suivant →
+            <button (click)="submitAnswer()" class="btn btn-primary" [disabled]="selectedAnswers.length === 0">
+              Valider la réponse →
+            </button>
+          </div>
+        </div>
+
+        <!-- Affichage de la review (réponses) -->
+        <div class="review-section" *ngIf="currentQuestion && showReview">
+          <div class="question-review">
+            <h3>{{ currentQuestion.question }}</h3>
+
+            <div class="answers-review">
+              <div *ngFor="let answer of currentQuestion.answers" 
+                   class="answer-review"
+                   [class.correct]="answer.isCorrect"
+                   [class.selected]="isAnswerSelected(answer.id)"
+                   [class.incorrect]="isAnswerSelected(answer.id) && !answer.isCorrect">
+                <span class="status-icon">
+                  <span *ngIf="answer.isCorrect && !isAnswerSelected(answer.id)" class="missed-icon">✓</span>
+                  <span *ngIf="answer.isCorrect && isAnswerSelected(answer.id)" class="correct-icon">✓</span>
+                  <span *ngIf="!answer.isCorrect && isAnswerSelected(answer.id)" class="wrong-icon">✗</span>
+                </span>
+                <span class="answer-text">{{ answer.text }}</span>
+              </div>
+            </div>
+
+            <div class="answer-explanation" *ngIf="currentQuestion.explanation">
+              <p><strong>📝 Explication :</strong> {{ currentQuestion.explanation }}</p>
+            </div>
+
+            <div class="answer-feedback">
+              <div class="feedback-status" [class.answer-correct]="isAnswerCorrect()" [class.answer-incorrect]="!isAnswerCorrect()">
+                <p *ngIf="isAnswerCorrect()" class="correct-feedback">
+                  ✅ Correct ! Vous avez sélectionné la bonne réponse.
+                </p>
+                <p *ngIf="!isAnswerCorrect()" class="incorrect-feedback">
+                  ❌ Incorrect. Veuillez revoir vos réponses.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button (click)="goToNextQuestion()" class="btn btn-primary">
+              Question suivante →
             </button>
           </div>
         </div>
@@ -219,6 +264,15 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
       font-size: 0.9rem;
     }
 
+    .current-score {
+      margin-top: 10px !important;
+      padding: 10px;
+      background: #e8ecff;
+      border-radius: 5px;
+      color: #667eea;
+      font-weight: 600;
+    }
+
     /* Questions */
     .question-section {
       margin-bottom: 30px;
@@ -281,6 +335,136 @@ import { QuizTheme, QuizQuestion, QuizResult } from '../models/quiz.model';
     .checkmark {
       font-size: 16px;
       font-weight: bold;
+    }
+
+    /* Review section */
+    .review-section {
+      margin-bottom: 30px;
+    }
+
+    .question-review {
+      margin-bottom: 20px;
+    }
+
+    .question-review h3 {
+      margin: 0 0 25px 0;
+      font-size: 1.3rem;
+      color: #333;
+    }
+
+    .answers-review {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .answer-review {
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      background: #f5f5f5;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .answer-review.correct {
+      background: #e8f5e9;
+      border-color: #4caf50;
+    }
+
+    .answer-review.correct.selected {
+      background: #c8e6c9;
+      border-color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .answer-review.incorrect.selected {
+      background: #ffebee;
+      border-color: #d32f2f;
+    }
+
+    .status-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .correct-icon {
+      background: #4caf50;
+      color: white;
+      font-size: 18px;
+    }
+
+    .wrong-icon {
+      background: #d32f2f;
+      color: white;
+      font-size: 18px;
+    }
+
+    .missed-icon {
+      background: #ff9800;
+      color: white;
+      font-size: 18px;
+    }
+
+    .answer-text {
+      flex: 1;
+      color: #333;
+    }
+
+    .answer-explanation {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+
+    .answer-explanation p {
+      margin: 0;
+      color: #856404;
+      line-height: 1.6;
+    }
+
+    .answer-feedback {
+      margin-bottom: 20px;
+    }
+
+    .feedback-status {
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .feedback-status.answer-correct {
+      background: #e8f5e9;
+      border: 2px solid #4caf50;
+    }
+
+    .feedback-status.answer-incorrect {
+      background: #ffebee;
+      border: 2px solid #d32f2f;
+    }
+
+    .correct-feedback {
+      margin: 0;
+      color: #2e7d32;
+      font-weight: 600;
+    }
+
+    .incorrect-feedback {
+      margin: 0;
+      color: #c62828;
+      font-weight: 600;
     }
 
     /* Boutons */
@@ -442,6 +626,8 @@ export class QuizComponent implements OnInit {
   selectedAnswers: string[] = [];
   quizCompleted = false;
   quizResult: QuizResult | null = null;
+  showReview = false;
+  currentScore = 0;
 
   constructor(
     private quizService: QuizService,
@@ -462,6 +648,8 @@ export class QuizComponent implements OnInit {
     this.selectedAnswers = [];
     this.quizCompleted = false;
     this.quizResult = null;
+    this.showReview = false;
+    this.currentScore = 0;
   }
 
   get currentQuestion(): QuizQuestion | null {
@@ -482,7 +670,40 @@ export class QuizComponent implements OnInit {
     return this.selectedAnswers.includes(answerId);
   }
 
-  nextQuestion() {
+  submitAnswer() {
+    if (!this.selectedTheme || !this.currentQuestion) return;
+
+    // Vérifier si la réponse est correcte
+    const correctAnswers = this.currentQuestion.answers
+      .filter(a => a.isCorrect)
+      .map(a => a.id);
+    
+    const isCorrect = 
+      this.selectedAnswers.length === correctAnswers.length &&
+      this.selectedAnswers.every(a => correctAnswers.includes(a));
+
+    if (isCorrect) {
+      this.currentScore++;
+    }
+
+    this.showReview = true;
+    this.cdr.detectChanges();
+  }
+
+  isAnswerCorrect(): boolean {
+    if (!this.currentQuestion) return false;
+
+    const correctAnswers = this.currentQuestion.answers
+      .filter(a => a.isCorrect)
+      .map(a => a.id);
+    
+    return (
+      this.selectedAnswers.length === correctAnswers.length &&
+      this.selectedAnswers.every(a => correctAnswers.includes(a))
+    );
+  }
+
+  goToNextQuestion() {
     if (!this.selectedTheme) return;
 
     if (this.currentQuestionIndex === this.selectedTheme.questions.length - 1) {
@@ -490,12 +711,16 @@ export class QuizComponent implements OnInit {
     } else {
       this.currentQuestionIndex++;
       this.selectedAnswers = [];
+      this.showReview = false;
       this.cdr.detectChanges();
     }
   }
 
   previousQuestion() {
-    if (this.currentQuestionIndex > 0) {
+    if (this.showReview) {
+      // Si en mode review, revenir à la question
+      this.showReview = false;
+    } else if (this.currentQuestionIndex > 0) {
       this.currentQuestionIndex--;
       this.selectedAnswers = [];
       this.cdr.detectChanges();
@@ -505,32 +730,12 @@ export class QuizComponent implements OnInit {
   completeQuiz() {
     if (!this.selectedTheme) return;
 
-    // Calculer le score
-    let score = 0;
-    const results = this.selectedTheme.questions.map((question, index) => {
-      const correctAnswers = question.answers
-        .filter(a => a.isCorrect)
-        .map(a => a.id);
-      
-      const isCorrect = 
-        this.selectedAnswers.length === correctAnswers.length &&
-        this.selectedAnswers.every(a => correctAnswers.includes(a));
-
-      if (isCorrect) score++;
-
-      return {
-        questionId: question.id,
-        selectedAnswerId: this.selectedAnswers.join(','),
-        isCorrect: isCorrect
-      };
-    });
-
     this.quizResult = {
       theme: this.selectedTheme.name,
-      score,
+      score: this.currentScore,
       totalQuestions: this.selectedTheme.questions.length,
-      percentage: Math.round((score / this.selectedTheme.questions.length) * 100),
-      answers: results
+      percentage: Math.round((this.currentScore / this.selectedTheme.questions.length) * 100),
+      answers: []
     };
 
     this.quizCompleted = true;
@@ -539,7 +744,12 @@ export class QuizComponent implements OnInit {
 
   restartQuiz() {
     if (this.selectedTheme) {
-      this.selectTheme(this.selectedTheme);
+      this.currentQuestionIndex = 0;
+      this.selectedAnswers = [];
+      this.quizCompleted = false;
+      this.quizResult = null;
+      this.showReview = false;
+      this.currentScore = 0;
       this.cdr.detectChanges();
     }
   }
@@ -550,6 +760,8 @@ export class QuizComponent implements OnInit {
     this.quizResult = null;
     this.currentQuestionIndex = 0;
     this.selectedAnswers = [];
+    this.showReview = false;
+    this.currentScore = 0;
     this.cdr.detectChanges();
   }
 }
